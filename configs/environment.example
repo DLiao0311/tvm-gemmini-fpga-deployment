@@ -1,0 +1,9 @@
+# Copy this file to configs/environment.local and update the paths.
+
+export TVM_HOME=/path/to/tvm
+export CHIPYARD_HOME=/path/to/chipyard
+
+# Gemmini hardware parameters used by the cross-compilation scripts.
+export DIM=16
+export SCRATCHPAD_KB=512
+export ACCUMULATOR_KB=256

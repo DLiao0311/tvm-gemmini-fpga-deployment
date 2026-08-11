@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+.pkl_memoize_py3/
+.venv/
+
+# Local environment
+.env
+configs/environment.local
+
+# Generated TVM artifacts
+generated/*
+!generated/.gitkeep
+MLF/
+AOT/
+AoT/
+cpu_only/
+lut_MLF/
+*.relay
+mlf.tar
+
+# Compiled output
+*.elf
+*.o
+*.a
+*.so
+
+# Build and experiment output
+build/
+logs/
+results/raw/
+
+# Large or local datasets
+images/
+data/*
+!data/README.md
+*.onnx
+*.data
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vivado generated projects and artifacts
+*.xpr
+*.bit
+*.bin
+*.ltx
+*.dcp
+*.jou
+*.str
+.Xil/
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/

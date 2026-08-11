@@ -1,0 +1,7 @@
+# This TVM revision still uses NumPy aliases removed in NumPy 2.0.
+numpy>=1.23,<2
+onnx
+onnxruntime
+Pillow
+
+# TVM must be installed from the tested Gemmini fork; see README.md Step 2.
