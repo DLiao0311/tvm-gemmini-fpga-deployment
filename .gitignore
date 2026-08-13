@@ -37,6 +37,10 @@ data/*
 *.onnx
 *.data
 
+# Curated ONNX models published with this repository
+!models/onnx_model/
+!models/onnx_model/**/*.onnx
+
 # Editors and operating systems
 .vscode/
 .idea/

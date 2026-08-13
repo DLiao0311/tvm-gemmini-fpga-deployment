@@ -1,7 +1,8 @@
 # Models
 
-Model binaries are not tracked in this repository. Place locally obtained models in this
-directory or pass their paths directly to the tools.
+The ONNX models under `models/onnx_model/` are tracked as reference inputs for reproducing
+the quantization and TVM compilation workflow. Other model binaries remain local unless they
+are explicitly added to the repository.
 
 Models used by the original research workspace:
 
@@ -11,5 +12,7 @@ Models used by the original research workspace:
 | `shin_crowd_model_float32.onnx` | `c6e23889df56d36f505711441f48a50cb17cd943a5a5fd22d4419394ba6424ab` |
 | `shin_crowd_model_int8_percentile_symmetric.onnx` | `3e8d5436e88e9b2b80fdd3ac78521d71bf966050929b75bb043891258e94442e` |
 
-Review the model license and training-data terms before publishing model binaries through Git
-LFS or a GitHub Release.
+These files are small enough to use regular Git and do not require Git LFS. Their inclusion in
+the repository does not imply that the training datasets are redistributed or covered by the
+repository's Apache-2.0 license. Confirm the model and training-data redistribution rights
+before making the repository public.
