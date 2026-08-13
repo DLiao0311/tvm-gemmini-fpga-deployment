@@ -62,3 +62,7 @@ Thumbs.db
 *.ip_user_files/
 *.runs/
 *.sim/
+
+# Curated, validated FPGA bitstreams published with this repository
+!hardware/bit_stream/
+!hardware/bit_stream/**/*.bit
