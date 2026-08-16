@@ -31,6 +31,32 @@ cd ~/tvm-gemmini-fpga-deployment
 git pull
 ```
 
+If `git pull` reports that local changes would be overwritten, inspect them before updating:
+
+```bash
+git status
+git diff -- docs/software-setup.md
+```
+
+Keep the changes temporarily with `git stash`, pull, and then reapply them:
+
+```bash
+git stash push -m "local setup edits"
+git pull
+git stash pop
+```
+
+If `git stash pop` reports a conflict, resolve the marked sections before continuing. If the
+local edit is not needed, discard only that file's change and retry the pull:
+
+```bash
+git restore docs/software-setup.md
+git pull
+```
+
+`git restore` permanently discards the uncommitted changes in the named file, so run the
+`git diff` command first.
+
 All remaining commands assume these locations:
 
 ```text
@@ -57,6 +83,19 @@ sudo apt install -y \
   wget \
   gcc-riscv64-linux-gnu \
   g++-riscv64-linux-gnu
+```
+
+Use the distribution package `python3-venv`; do not assume that a version-specific package such
+as `python3.8-venv` is available from the configured repositories. `build-essential` is also
+required: it installs both the C compiler (`gcc`) and the C++ compiler (`g++`). A Python virtual
+environment does not provide system compilers or LLVM.
+
+Verify the native compilers before configuring TVM:
+
+```bash
+gcc --version
+g++ --version
+command -v g++
 ```
 
 ### Install LLVM 14
@@ -95,10 +134,28 @@ The expected LLVM configuration executable is:
 cd ~
 python3 -m venv tvm_venv
 source ~/tvm_venv/bin/activate
-python -m pip install --upgrade pip setuptools wheel
+python -m pip install --upgrade pip setuptools wheel cmake
 
 cd ~/tvm-gemmini-fpga-deployment
 python -m pip install -r requirements.txt
+```
+
+Ubuntu 20.04 provides CMake 3.16.3 through APT, but this TVM checkout requires CMake 3.18 or
+newer. Installing `cmake` in the virtual environment supplies a sufficiently new executable
+without replacing `/usr/bin/cmake`. Confirm that the active environment selects it:
+
+```bash
+command -v cmake
+cmake --version
+```
+
+The path should be `~/tvm_venv/bin/cmake`, and the version must be 3.18 or newer. If the shell
+still selects `/usr/bin/cmake`, reactivate the environment and clear the shell command cache:
+
+```bash
+source ~/tvm_venv/bin/activate
+hash -r
+command -v cmake
 ```
 
 The requirements include the Python packages used by TVM, ONNX import and quantization,
@@ -163,9 +220,22 @@ set(BUILD_STATIC_RUNTIME OFF)
 Build the host compiler:
 
 ```bash
+source ~/tvm_venv/bin/activate
 cmake -S ~/tvm -B ~/tvm/build_host
 cmake --build ~/tvm/build_host --parallel "$(nproc)"
 ```
+
+If CMake was previously run with an old CMake version or before `g++` was installed, remove only
+the generated configuration cache and configure again:
+
+```bash
+rm -f ~/tvm/build_host/CMakeCache.txt
+rm -rf ~/tvm/build_host/CMakeFiles
+cmake -S ~/tvm -B ~/tvm/build_host
+```
+
+The error `No CMAKE_CXX_COMPILER could be found` means `g++` is missing or unavailable in
+`PATH`; install `build-essential` as shown in section 2 and then repeat the cache cleanup above.
 
 A successful build produces:
 
