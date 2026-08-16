@@ -23,7 +23,7 @@ From the repository root:
 
 ```bash
 python3 step2_tvm_compile/export_mlf.py \
-  --model generated/quantized_models/int8_percentile_99_9_symmetric.onnx
+  --model generated/quantized_models/<source-model-name>/int8_percentile_99_9_symmetric.onnx
 ```
 
 ## Run with LUT
@@ -32,7 +32,7 @@ From the repository root:
 
 ```bash
 python3 step2_tvm_compile/export_mlf_with_lut.py \
-  --model generated/quantized_models/int8_percentile_99_9_symmetric.onnx
+  --model generated/quantized_models/<source-model-name>/int8_percentile_99_9_symmetric.onnx
 ```
 
 If the model uses different RGB normalization parameters:

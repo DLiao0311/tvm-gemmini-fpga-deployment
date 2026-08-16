@@ -14,7 +14,17 @@ BANK_NUM=4
 # ---------------------------------------------
 
 MLF_ROOT="${PROJECT_ROOT}/generated/mlf/runs"
-MLF_DIR="${1:-$(find "${MLF_ROOT}" -mindepth 1 -maxdepth 1 -type d | sort | tail -n 1)}"
+if [ "$#" -ge 1 ]; then
+  MLF_DIR="$1"
+elif [ -d "${MLF_ROOT}" ]; then
+  MLF_DIR="$(find "${MLF_ROOT}" -mindepth 1 -maxdepth 1 -type d | sort | tail -n 1)"
+else
+  MLF_DIR=""
+fi
+if [ -z "${MLF_DIR}" ] || [ ! -d "${MLF_DIR}" ]; then
+  echo "ERROR: no MLF run found. Run Step 2 without LUT first, or pass an MLF run directory as argument 1." >&2
+  exit 1
+fi
 OUTPUT_ELF="${2:-${PROJECT_ROOT}/generated/elf/pc_gemmini_dim${DIM}_sp${SCRATCHPAD_KB}kb_acc${ACCUMULATOR_KB}kb_mlf.elf}"
 
 SRC_DIR="${MLF_DIR}/codegen/host/src"
@@ -66,7 +76,6 @@ fi
 
 riscv64-linux-gnu-gcc \
   -static \
-  -DPRINT_TILE=1 \
   -mcmodel=medany \
   -march=rv64gc \
   -mabi=lp64d \

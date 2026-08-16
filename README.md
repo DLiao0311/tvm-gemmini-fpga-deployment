@@ -169,9 +169,8 @@ The ELF is written to `generated/elf/`.
 
 ## License
 
-Original code and documentation developed for this repository are intended to be released
-under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), unless otherwise
-noted. A root `LICENSE` file will be added before the repository is made public.
+Original code and documentation developed for this repository are released under the
+[Apache License 2.0](LICENSE), unless otherwise noted.
 
 Third-party components retain their original licenses and copyright notices:
 
@@ -184,7 +183,7 @@ Third-party components retain their original licenses and copyright notices:
   BSD-3-Clause and Apache-2.0 (`LICENSE.SiFive`). Its source is referenced as an external
   dependency and is not currently redistributed by this repository.
 
-The ONNX models, datasets, images, ground-truth annotations, generated artifacts, and FPGA
-bitstreams are not covered by the repository's Apache-2.0 statement unless a file or release
-explicitly says otherwise. Their redistribution rights must be confirmed separately before
-publication.
+The ONNX models in `models/onnx_model/` are authored by the project owner and intentionally
+published as reproducibility artifacts. Datasets, images, ground-truth annotations, generated
+artifacts, and FPGA bitstreams are not covered by the repository's Apache-2.0 statement unless
+a file or release explicitly says otherwise.
