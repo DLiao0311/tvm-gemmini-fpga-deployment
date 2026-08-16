@@ -1,7 +1,22 @@
 # This TVM revision still uses NumPy aliases removed in NumPy 2.0.
 numpy>=1.23,<2
+
+# TVM Python dependencies used by the original development environment.
+attrs
+cloudpickle
+decorator
+ml_dtypes
+psutil
+scipy
+six
+tornado
+typing_extensions
+xgboost
+
+# ONNX model import, quantization, evaluation, and image preprocessing.
 onnx
 onnxruntime
 Pillow
 
-# TVM must be installed from the tested Gemmini fork; see README.md Step 2.
+# TVM itself must be installed in editable mode from the tested Gemmini fork. CMake is installed
+# as a system package in docs/software-setup.md rather than duplicated through pip.

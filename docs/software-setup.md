@@ -102,6 +102,10 @@ python -m pip install -r requirements.txt
 ```
 
 This TVM revision requires NumPy 1.x; `requirements.txt` constrains it to `numpy<2`.
+The file also explicitly records the TVM Python packages from the original development
+environment (`attrs`, `cloudpickle`, `decorator`, `ml_dtypes`, `psutil`, `scipy`, `six`,
+`tornado`, `typing_extensions`, and `xgboost`) together with ONNX Runtime and Pillow.
+CMake is installed through `apt` in Step 1 instead of installing a second copy through pip.
 
 ## 4. Configure and build host TVM
 
