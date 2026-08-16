@@ -15,10 +15,23 @@ supplied by the following public repository:
 - Functionality stated by the upstream project: UART, JTAG, microSD, and the Genesys 2
   FPGA shell/harness
 
-The board-support source is not copied into this repository. Follow its installation
-instructions and preserve its `LICENSE` and `LICENSE.SiFive` files. For a reproducible
-build, record the exact commit used rather than relying permanently on its moving
-`master` branch.
+The validated hardware sources are published in the following forks and branches:
+
+| Component | Repository / branch | Commit |
+|---|---|---|
+| Chipyard | `DLiao0311/chipyard`, `genesys2-gemmini-1.13.0` | `6f3015a5` |
+| Gemmini | `DLiao0311/gemmini`, `genesys2-config` | `c8bcc68e` |
+| FPGA shells | `DLiao0311/rocket-chip-fpga-shells`, `genesys2-support` | `83f9e9fe` |
+| Original Genesys 2 port | `stanley-666/chipyard_fpga_genesys2` | `8a3aff1a` |
+
+The Chipyard fork is based on Chipyard 1.13.0 commit
+`69eba860a352343e4ac6b6df0f3638a79a86ec78`. Its submodule pointers and `.gitmodules`
+URLs select the Gemmini and FPGA-shell commits listed above.
+
+The board-support source is integrated into the attributed Chipyard and FPGA-shell forks; it
+is not duplicated in this deployment repository. The upstream `LICENSE` and
+`LICENSE.SiFive` notices are retained. Use the pinned commits above rather than the moving
+branch tips for reproduction.
 
 ## Project-specific hardware configuration
 
@@ -35,16 +48,16 @@ Gemmini 16x16 / scratchpad 512 KiB / accumulator 256 KiB
 Gemmini 32x32 / scratchpad 512 KiB / accumulator 256 KiB
 ```
 
-The corresponding Scala configuration files still need to be extracted from the
-validated Chipyard workspace and added here as a small, reviewable project-specific
-patch. They should not be presented as part of the upstream Genesys 2 port.
+The corresponding Scala configurations are committed in the Chipyard and Gemmini forks.
+The Genesys 2 harness and shell remain attributed to the upstream board port; the four
+resource-constrained Gemmini configurations are project-specific additions.
 
 ## Build sequence
 
 ```text
-Chipyard 1.13.0
-        + Genesys 2 board-support repository
-        + project-specific Rocket/Gemmini Config
+DLiao0311/chipyard @ 6f3015a5
+        + DLiao0311/gemmini @ c8bcc68e
+        + DLiao0311/rocket-chip-fpga-shells @ 83f9e9fe
         -> RTL generation
         -> Vivado project (.xpr)
         -> synthesis and preliminary utilization estimate
