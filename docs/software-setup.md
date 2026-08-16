@@ -29,25 +29,43 @@ On Ubuntu, install the base packages with:
 sudo apt update
 sudo apt install -y \
   build-essential \
+  ca-certificates \
   cmake \
-  ninja-build \
+  gnupg \
   python3-dev \
   python3-pip \
   python3-venv \
+  wget \
   gcc-riscv64-linux-gnu \
   g++-riscv64-linux-gnu
 ```
 
-The original environment used LLVM 14. Package availability and installation sources differ
-between Ubuntu 22.04 and Ubuntu 20.04, so the LLVM 14 installation method for Ubuntu 20.04 is
-still being verified. Before configuring TVM, record the selected installation:
+The original environment used LLVM 14. Ubuntu 20.04 does not provide LLVM 14 in its default
+Ubuntu package repository, but the official LLVM package repository provides the
+`llvm-toolchain-focal-14` distribution. Add that repository, then install only the LLVM 14
+packages required by this build:
 
 ```bash
-llvm-config --version
-llvm-config --cmakedir
+wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
+  | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
+
+echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" \
+  | sudo tee /etc/apt/sources.list.d/llvm14.list
+
+sudo apt update
+sudo apt install -y llvm-14 llvm-14-dev clang-14
 ```
 
-If `llvm-config` is versioned, use the corresponding command, such as `llvm-config-14`.
+Verify the exact tools used by TVM:
+
+```bash
+llvm-config-14 --version
+clang-14 --version
+command -v llvm-config-14
+```
+
+The expected `llvm-config-14` path on this installation is `/usr/bin/llvm-config-14`. The
+repository setup script and Focal LLVM 14 packages are published by <https://apt.llvm.org/>.
 
 Vivado and Chipyard are not required for Steps 1–3. They are required only when regenerating
 the FPGA hardware or bitstream.
@@ -120,20 +138,13 @@ cp cmake/config.cmake build_host/config.cmake
 Set at least the following entries in `build_host/config.cmake`:
 
 ```cmake
-set(USE_LLVM ON)
+set(USE_LLVM /usr/bin/llvm-config-14)
 set(USE_AOT_EXECUTOR ON)
 set(USE_GRAPH_EXECUTOR OFF)
 set(USE_PROFILER OFF)
 set(USE_MICRO ON)
 set(USE_GEMMINI ON)
 set(BUILD_STATIC_RUNTIME OFF)
-```
-
-If CMake cannot locate LLVM automatically, replace `ON` with the path to the selected
-`llvm-config` executable, for example:
-
-```cmake
-set(USE_LLVM /usr/bin/llvm-config-14)
 ```
 
 Build TVM:
@@ -225,7 +236,7 @@ For the current clean-machine reproduction, record:
 lsb_release -ds
 python3 --version
 cmake --version
-llvm-config --version
+llvm-config-14 --version
 riscv64-linux-gnu-gcc --version
 python -m pip freeze
 git -C ~/tvm rev-parse HEAD
