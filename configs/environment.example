@@ -1,6 +1,8 @@
 # Copy this file to configs/environment.local and update the paths.
 
 export TVM_HOME=/path/to/tvm
+export TVM_LIBRARY_PATH="${TVM_HOME}/build_host"
+export PYTHONPATH="${TVM_HOME}/python${PYTHONPATH:+:${PYTHONPATH}}"
 
 # Gemmini hardware parameters used by the cross-compilation scripts. Step 3 uses the
 # vendored software API under third_party/ and does not require a Chipyard checkout.

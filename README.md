@@ -12,6 +12,10 @@ people-counting model is used as the primary case study.
 This repository is being organized from the implementation developed for the thesis:
 “TVM-Based CNN Deployment on RISC-V FPGA SoC with Gemmini Accelerator.”
 
+The original software workflow was developed on Ubuntu 22.04. A clean-machine reproduction on
+Ubuntu 20.04 is currently in progress; see [`docs/software-setup.md`](docs/software-setup.md)
+for the procedure and current validation boundary.
+
 ## Validated environment
 
 - Board: Digilent Genesys 2
@@ -111,7 +115,7 @@ models/<fp32-model>.onnx
 ## Basic usage
 
 Install Python dependencies, then install the tested TVM fork in editable mode as described in
-its build documentation. Configure the local toolchain paths:
+the [software setup guide](docs/software-setup.md). Configure the local toolchain paths:
 
 ```bash
 cp configs/environment.example configs/environment.local
