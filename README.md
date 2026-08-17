@@ -54,14 +54,60 @@ Relay import, layout and quantized-operator normalization
 Gemmini pattern matching and legalization
       |
       v
-AOT code generation and Model Library Format export
+AOT C code generation and Model Library Format export
       |
       v
-RISC-V cross-compilation
+Gemmini API integration and RISC-V cross-compilation
+      |
+      v
+Target objects linked into a Linux ELF
       |
       v
 Linux on Rocket Core + Gemmini FPGA SoC
 ```
+
+## Why generate C before the ELF?
+
+Most mature ML deployment toolchains do not expose C source as a deliberate integration
+boundary. They lower a model through an internal representation directly to target-specific
+object code, then link those objects with an application and runtime. This is effective when
+the compiler already has complete support for the target CPU or accelerator, but it provides
+little room to inspect or adapt accelerator calls before machine code is emitted. An object
+file is already compiled for a particular ISA and ABI; a host object cannot subsequently be
+cross-compiled into a RISC-V object.
+
+This project intentionally retains generated C between TVM lowering and ELF creation because
+Gemmini integration is part of the research problem, not merely a final packaging step. The C
+boundary makes it possible to:
+
+- map supported Relay subgraphs to the Gemmini software API while leaving surrounding
+  application and runtime code in conventional C;
+- adapt generated calls to the Chipyard/Gemmini API version used by the FPGA design;
+- propagate quantization, layout, fused-activation, tiling, and memory-configuration decisions
+  into code that can be inspected and debugged;
+- compile the same generated model code with the RISC-V toolchain and the exact `DIM`,
+  scratchpad, and accumulator configuration implemented in hardware; and
+- link model code, parameters, preprocessing, postprocessing, TVM runtime support, and the
+  application entry point into one deployable Linux ELF.
+
+Model Library Format (MLF) preserves this boundary by packaging the AOT-generated C sources,
+headers, parameters, and metadata for the downstream platform build. Step 2 therefore performs
+model-level lowering and exports an inspectable integration artifact; Step 3 performs the
+platform-specific cross-compilation and linking:
+
+```text
+Quantized ONNX
+      -> TVM Relay/TIR and Gemmini legalization
+      -> generated C plus MLF metadata and parameters
+      -> RISC-V compilation into target-specific objects
+      -> link with the runtime and application
+      -> Rocket + Gemmini Linux ELF
+```
+
+The extra C stage is consequently not a workaround for ELF generation. It is the explicit
+hardware/software co-design boundary that allows a real quantized CNN, TVM's pattern-constrained
+Gemmini backend, the Gemmini accelerator API, and a concrete FPGA configuration to be validated
+together.
 
 ## Main contributions
 
