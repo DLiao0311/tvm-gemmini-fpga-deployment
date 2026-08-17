@@ -1,22 +1,23 @@
+# Versions below reproduce the Ubuntu 20.04 environment validated on 2026-08-17.
 # This TVM revision still uses NumPy aliases removed in NumPy 2.0.
-numpy>=1.23,<2
+numpy==1.23.0
 
 # TVM Python dependencies used by the original development environment.
-attrs
-cloudpickle
-decorator
-ml_dtypes
-psutil
-scipy
-six
-tornado
-typing_extensions
-xgboost
+attrs==25.3.0
+cloudpickle==3.1.2
+decorator==5.3.1
+ml_dtypes==0.2.0
+psutil==7.2.2
+scipy==1.10.1
+six==1.17.0
+tornado==6.4.2
+typing_extensions==4.13.2
+xgboost==2.1.4
 
 # ONNX model import, quantization, evaluation, and image preprocessing.
-onnx
-onnxruntime
-Pillow
+onnx==1.17.0
+onnxruntime==1.16.3
+Pillow==10.4.0
 
-# TVM itself must be installed in editable mode from the tested Gemmini fork. CMake is installed
-# as a system package in docs/software-setup.md rather than duplicated through pip.
+# TVM itself is installed in editable mode from the tested Gemmini fork. The setup script installs
+# its pinned CMake separately because Ubuntu 20.04's system CMake is too old for this TVM revision.

@@ -12,9 +12,9 @@ people-counting model is used as the primary case study.
 This repository is being organized from the implementation developed for the thesis:
 “TVM-Based CNN Deployment on RISC-V FPGA SoC with Gemmini Accelerator.”
 
-The original software workflow was developed on Ubuntu 22.04. A clean-machine reproduction on
-Ubuntu 20.04 is currently in progress; see [`docs/software-setup.md`](docs/software-setup.md)
-for the procedure and current validation boundary.
+The original software workflow was developed on Ubuntu 22.04. The Ubuntu 20.04 software flow
+has been reproduced through static RISC-V ELF generation; hardware execution remains pending.
+See [`docs/software-setup.md`](docs/software-setup.md) for the procedure and validation boundary.
 
 ## Validated environment
 
@@ -29,7 +29,7 @@ for the procedure and current validation boundary.
 - FPGA-shell commit: `83f9e9fe`
 - TVM fork: `https://github.com/DLiao0311/tvm`
 - TVM branch: `pr-13770`
-- TVM base commit: `463f41dff`
+- Tested TVM commit: `735c39a665887fdd9a1c5700a66b7904943d4d3e`
 - Vendored Gemmini RoCC software: `1a1a1c6bd` plus configurable hardware-parameter guards
 
 ## Key results
@@ -160,14 +160,15 @@ models/<fp32-model>.onnx
 
 ## Basic usage
 
-Install Python dependencies, then install the tested TVM fork in editable mode as described in
-the [software setup guide](docs/software-setup.md). Configure the local toolchain paths:
+On Ubuntu 20.04, create the complete software environment with:
 
 ```bash
-cp configs/environment.example configs/environment.local
-# Edit configs/environment.local, then:
-source configs/environment.local
+./setup_ubuntu20.04.sh
+source ~/tvm_venv/bin/activate
 ```
+
+The [software setup guide](docs/software-setup.md) documents the automated process and retains
+the manual equivalent for troubleshooting.
 
 ### Step 1: Quantize the model
 

@@ -10,8 +10,9 @@ deployment repository
         -> RISC-V Linux ELF
 ```
 
-The original workflow was developed on Ubuntu 22.04. Ubuntu 20.04 reproduction is currently
-in progress and should not be described as fully validated until the final checklist succeeds.
+The original workflow was developed on Ubuntu 22.04. The Ubuntu 20.04 software workflow has
+been reproduced through generation of a static RISC-V Linux ELF. Execution on the matching FPGA
+hardware remains a separate validation step.
 
 Vivado and Chipyard are not required here. They are needed only to regenerate the FPGA hardware
 and bitstream.
@@ -64,6 +65,30 @@ All remaining commands assume these locations:
 ~/tvm
 ~/tvm_venv
 ```
+
+## Automated setup
+
+From the deployment repository root, run:
+
+```bash
+./setup_ubuntu20.04.sh
+```
+
+The script installs only missing system packages, creates or reuses `~/tvm_venv`, checks out the
+pinned TVM fork in `~/tvm`, builds `~/tvm/build_host`, installs the TVM Python package, writes
+`configs/environment.local` when it does not already exist, and validates the resulting toolchain.
+It stops rather than overwriting tracked local changes in an existing TVM checkout.
+
+After setup, load the environment with:
+
+```bash
+source ~/tvm_venv/bin/activate
+```
+
+The setup script links `configs/environment.local` from the virtual environment's activation
+script, so activating `~/tvm_venv` loads both the Python environment and the project settings.
+
+The remaining sections document the equivalent manual process and provide troubleshooting detail.
 
 ## 2. Install Ubuntu 20.04 system packages
 
@@ -170,7 +195,7 @@ git clone --recursive \
   --branch pr-13770 \
   https://github.com/DLiao0311/tvm.git
 cd ~/tvm
-git checkout 463f41dff1e8aacf40267d7d11929236fec114f3
+git checkout 735c39a665887fdd9a1c5700a66b7904943d4d3e
 git submodule update --init --recursive
 ```
 
@@ -186,7 +211,7 @@ The expected TVM revision is:
 ```text
 repository: https://github.com/DLiao0311/tvm
 source branch: pr-13770
-commit:     463f41dff1e8aacf40267d7d11929236fec114f3
+commit:     735c39a665887fdd9a1c5700a66b7904943d4d3e
 ```
 
 Checking out the pinned commit places Git in detached-HEAD state. That is expected for a
@@ -197,24 +222,13 @@ another branch and do not manually replace `intrin.py` or `pattern_table.py`.
 
 ## 5. Configure and build host TVM
 
-Create the host build directory and configuration:
+The pinned TVM fork already contains the validated root `config.cmake`, including
+`USE_LLVM=llvm-config-14` and the required AOT, microTVM, and Gemmini options. Create the host
+build directory:
 
 ```bash
 cd ~/tvm
 mkdir -p build_host
-cp cmake/config.cmake build_host/config.cmake
-```
-
-Set the following entries in `~/tvm/build_host/config.cmake`:
-
-```cmake
-set(USE_LLVM /usr/bin/llvm-config-14)
-set(USE_AOT_EXECUTOR ON)
-set(USE_GRAPH_EXECUTOR OFF)
-set(USE_PROFILER OFF)
-set(USE_MICRO ON)
-set(USE_GEMMINI ON)
-set(BUILD_STATIC_RUNTIME OFF)
 ```
 
 Build the host compiler:
@@ -289,7 +303,7 @@ source configs/environment.local
 Verify that Python loads this TVM source tree and its matching shared library:
 
 ```bash
-python3 -c 'import tvm; print(tvm.__file__); print(tvm.base._LIB)'
+python3 -c 'import tvm; from tvm._ffi.base import _LIB; print(tvm.__file__); print(_LIB)'
 ```
 
 The paths must point into:
